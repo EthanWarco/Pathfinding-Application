@@ -24,6 +24,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.FontUIResource;
 
+import algorithms.PathFinder;
+
 
 public class Main implements ActionListener {
 	
@@ -39,10 +41,12 @@ public class Main implements ActionListener {
 	private static JComboBox<String> actions;
 	private static JComboBox<Integer> densities;
 	private static JComboBox<Integer> sizes;
+	private static JComboBox<String> pathfindingAlgorithms;
 	private static JLabel blank;
 	private static JLabel actionsLabel;
 	private static JLabel randomizedDensity;
 	private static JLabel sizesLabel;
+	private static JLabel pathAlgLabel;
 	private static JLabel noPathFound;
 	private static JLabel delayLabel;
 	private static JSlider delaySlider;
@@ -115,6 +119,16 @@ public class Main implements ActionListener {
 		sizes.setSelectedIndex(factors.length-1);
 		sizes.addActionListener(this);
 		
+		pathAlgLabel = new JLabel("Algorithm:");
+		pathAlgLabel.setPreferredSize(new Dimension(100, 30));
+		pathAlgLabel.setFont(toolbarFont);
+		
+		String[] algs = {"A*", "Depth First Search", "Breadth First Search"};
+		pathfindingAlgorithms = new JComboBox<String>(algs);
+		pathfindingAlgorithms.setPreferredSize(new Dimension(200, 30));
+		pathfindingAlgorithms.setFont(toolbarFont);
+		pathfindingAlgorithms.setSelectedIndex(algs.length-1);
+		
 		play = new JButton("Play");
 		play.setPreferredSize(new Dimension(300, 40));
 		play.setFont(toolbarFont);
@@ -162,7 +176,7 @@ public class Main implements ActionListener {
 		randomMaze.addActionListener(this);
 		
 		toolbar = new JPanel();
-		toolbar.setBorder(new TitledBorder(BorderFactory.createLineBorder(new Color(186, 198, 205), 2), "A* Pathfinding", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, toolbarFont));
+		toolbar.setBorder(new TitledBorder(BorderFactory.createLineBorder(new Color(186, 198, 205), 2), "Pathfinding", TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, toolbarFont));
 		toolbar.setBounds(10, 0, width/5 - 20, height - 10);
 		toolbar.setBackground(toolbarColor);
 		toolbar.setLayout(new GridBagLayout());
@@ -176,59 +190,59 @@ public class Main implements ActionListener {
 		blank.setPreferredSize(new Dimension(300, 5));
 		toolbar.add(blank, gbc);
 		
-		gbc.gridy = 2;
+		gbc.gridy++;
 		toolbar.add(clearGrid, gbc);
 		
-		gbc.gridy = 3;
+		gbc.gridy++;
 		blank = new JLabel("");
 		blank.setPreferredSize(new Dimension(300, 5));
 		toolbar.add(blank, gbc);
-		
-		gbc.gridy = 4;
+
+		gbc.gridy++;
 		toolbar.add(clearPath, gbc);
-		
-		gbc.gridy = 5;
+
+		gbc.gridy++;
 		blank = new JLabel("");
 		blank.setPreferredSize(new Dimension(300, 100));
 		toolbar.add(blank, gbc);
-		
-		gbc.gridy = 6;
+
+		gbc.gridy++;
 		gbc.gridwidth = 1;
 		toolbar.add(randomizedDensity, gbc);
 		
 		gbc.gridx = 1;
 		gbc.gridwidth = 2;
 		toolbar.add(densities, gbc);
-		
-		gbc.gridy = 7;
+
+		gbc.gridy++;
 		gbc.gridx = 0;
 		gbc.gridwidth = 3;
 		blank = new JLabel("");
 		blank.setPreferredSize(new Dimension(300, 5));
 		toolbar.add(blank, gbc);
-		
-		gbc.gridy = 8;
+
+		gbc.gridy++;
 		toolbar.add(randomize, gbc);
-		
-		gbc.gridy = 9;
+
+		gbc.gridy++;
 		blank = new JLabel("");
 		blank.setPreferredSize(new Dimension(300, 100));
 		toolbar.add(blank, gbc);
-		
-		gbc.gridy = 10;
+
+		gbc.gridy++;
 		blank = new JLabel("");
 		blank.setPreferredSize(new Dimension(300, 5));
 		toolbar.add(blank, gbc);
 		
-		gbc.gridy = 11;
+		gbc.gridy++;
 		toolbar.add(randomMaze, gbc);
 		
-		gbc.gridy = 12;
+		gbc.gridy++;
 		blank = new JLabel("");
 		blank.setPreferredSize(new Dimension(300, 100));
 		toolbar.add(blank, gbc);
 		
-		gbc.gridy = 13;
+		gbc.gridy++;
 		gbc.gridwidth = 2;
 		toolbar.add(actionsLabel, gbc);
 		
@@ -236,54 +250,69 @@ public class Main implements ActionListener {
 		gbc.gridwidth = 1;
 		toolbar.add(actions, gbc);
 
-		gbc.gridy = 14;
+		gbc.gridy++;
 		gbc.gridx = 0;
 		gbc.gridwidth = 3;
 		blank = new JLabel("");
 		blank.setPreferredSize(new Dimension(300, 10));
 		toolbar.add(blank, gbc);
 		
-		gbc.gridy = 15;
+		gbc.gridy++;
 		gbc.gridwidth = 2;
 		toolbar.add(sizesLabel, gbc);
 		
 		gbc.gridx = 2;
 		gbc.gridwidth = 1;
 		toolbar.add(sizes, gbc);
+
+		gbc.gridy++;
+		gbc.gridx = 0;
+		gbc.gridwidth = 3;
+		blank = new JLabel("");
+		blank.setPreferredSize(new Dimension(300, 10));
+		toolbar.add(blank, gbc);
 		
-		gbc.gridy = 16;
+		gbc.gridy++;
+		gbc.gridwidth = 2;
+		toolbar.add(pathAlgLabel, gbc);
+		
+		gbc.gridx = 2;
+		gbc.gridwidth = 1;
+		toolbar.add(pathfindingAlgorithms, gbc);
+		
+		gbc.gridy++;
 		gbc.gridwidth = 3;
 		gbc.gridx = 0;
 		blank = new JLabel("");
 		blank.setPreferredSize(new Dimension(300, 50));
 		toolbar.add(blank, gbc);
 		
-		gbc.gridy = 17;
+		gbc.gridy++;
 		toolbar.add(diagonals, gbc);
 		
-		gbc.gridy = 18;
+		gbc.gridy++;
 		blank = new JLabel("");
 		blank.setPreferredSize(new Dimension(300, 5));
 		toolbar.add(blank, gbc);
 		
-		gbc.gridy = 19;
+		gbc.gridy++;
 		toolbar.add(showNodes, gbc);
 		
-		gbc.gridy = 20;
+		gbc.gridy++;
 		blank = new JLabel("");
 		blank.setPreferredSize(new Dimension(300, 100));
 		toolbar.add(blank, gbc);
 		
-		gbc.gridy = 21;
+		gbc.gridy++;
 		toolbar.add(delayLabel, gbc);
 		
-		gbc.gridy = 22;
+		gbc.gridy++;
 		toolbar.add(delaySlider, gbc);
 		
-		gbc.gridy = 23;
+		gbc.gridy++;
 		toolbar.add(noPathFound, gbc);
 		
-		gbc.gridy = 24;
+		gbc.gridy++;
 		toolbar.add(play, gbc);
 		
 		
@@ -312,11 +341,11 @@ public class Main implements ActionListener {
 			public void run() {
 				if(e.getSource() == clearGrid) {
 					Maze.stopMazeGeneration();
-					Finder.stopPathFinding();
+					PathFinder.stopPathFinding();
 					mazePanel.clear(div);
 				} else if(e.getSource() == randomize) {
 					Maze.stopMazeGeneration();
-					Finder.stopPathFinding();
+					PathFinder.stopPathFinding();
 					mazePanel.clear(div);
 					mazePanel.randomize((int)densities.getSelectedItem());
 				} else if(e.getSource() == clearPath) {
@@ -335,16 +364,16 @@ public class Main implements ActionListener {
 					}
 				} else if(e.getSource() == sizes) {
 					Maze.stopMazeGeneration();
-					Finder.stopPathFinding();
+					PathFinder.stopPathFinding();
 					div = (int) sizes.getSelectedItem();
 					mazePanel.clear(div);
 				} else if(e.getSource() == quit) {
 					Maze.stopMazeGeneration();
-					Finder.stopPathFinding();
+					PathFinder.stopPathFinding();
 					frame.dispose();
 				} else if(e.getSource() == play) {
 					Maze.stopMazeGeneration();
-					Finder.stopPathFinding();
+					PathFinder.stopPathFinding();
 					for(Component comp : toolbar.getComponents()) {
 						if(comp != quit) {
 							comp.setEnabled(false);
@@ -352,7 +381,7 @@ public class Main implements ActionListener {
 					}
 					
 					mazePanel.setCanDraw(false);
-					boolean found = mazePanel.drawPath(showNodes.isSelected(), diagonals.isSelected(), delay);
+					boolean found = mazePanel.drawPath((String)pathfindingAlgorithms.getSelectedItem(), showNodes.isSelected(), diagonals.isSelected(), delay);
 					
 					if(found) {
 						noPathFound.setText("");

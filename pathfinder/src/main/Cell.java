@@ -5,10 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
 
-enum CellState {
-	FINISH, START, BLANK, WALL
-}
-
 public class Cell implements Comparable<Cell> {
 	
 	public int screenX, screenY;

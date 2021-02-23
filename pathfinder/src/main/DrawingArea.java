@@ -11,10 +11,14 @@ import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.util.List;
 import java.util.Random;
 
 import javax.swing.JComponent;
+
+import algorithms.AStar;
+import algorithms.BFS;
+import algorithms.DFS;
+import algorithms.PathFinder;
 
 @SuppressWarnings("serial")
 public class DrawingArea extends JComponent {
@@ -45,17 +49,9 @@ public class DrawingArea extends JComponent {
 			public void mousePressed(MouseEvent e) {
 				if(canDraw) {
 					Cell cell = findCell(new Point((int)e.getLocationOnScreen().getX() - (width/widthRatio), (int)e.getLocationOnScreen().getY()));
-					if(Main.status == CellState.FINISH) {
-						Cell finish = findCellFromState(CellState.FINISH);
-						if(finish != null) {
-							finish.setState(CellState.BLANK);
-						}
-					} else if(Main.status == CellState.START) {
-						Cell start = findCellFromState(CellState.START);
-						if(start != null) {
-							start.setState(CellState.BLANK);
-						}
-					}
+					if(Main.status == CellState.FINISH && finish != null) finish.setState(CellState.BLANK);
+					else if(Main.status == CellState.START && start != null) start.setState(CellState.BLANK);
+					
 					if(cell != null) {
 						cell.setState(Main.status);
 						repaint();
@@ -139,49 +135,29 @@ public class DrawingArea extends JComponent {
 		return null;
 	}
 	
-	private Cell findCellFromState(CellState state) {
-		for(int i = 0; i < grid.length; i++) {
-			for(int j = 0; j < grid[i].length; j++) {
-				if(grid[i][j].getState() == state) {
-					return grid[i][j];
-				}
-			}
-		}
-		return null;
-	}
-	
 	public void setCanDraw(boolean canDraw) {
 		this.canDraw = canDraw;
 	}
 	
-	public boolean drawPath(boolean showNodes, boolean diagonals, int delay) {
-		Finder finder = new Finder(grid, start, finish, diagonals, showNodes, delay);
-		List<Cell> path = finder.findPath();
+	public boolean drawPath(String algorithm, boolean showNodes, boolean diagonals, int delay) {
+		PathFinder finder = null;
 		
-		if(path.isEmpty()) {
-			return false;
+		switch(algorithm) {
+			case "A*": finder = new AStar(grid, start, finish, diagonals, showNodes, delay);
+			break;
+			case "Depth First Search": finder = new DFS(grid, start, finish, diagonals, showNodes, delay);
+			break;
+			case "Breadth First Search": finder = new BFS(grid, start, finish, diagonals, showNodes, delay);
+			break;
 		}
 		
-		finish.setState(CellState.FINISH);
-		for(int i = 1; i < path.size(); i++) {
-			try {
-				Thread.sleep(delay/2);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			path.get(i).fillSquare(Color.YELLOW, false);
-		}
-		repaint();
-		
-		return true;
+		return finder.findPath();
 	}
 	
 	public void clearPath() {
 		for(int i = 0; i < grid.length; i++) {
 			for(int j = 0; j < grid[i].length; j++) {
-				if(grid[i][j].getState() != CellState.WALL && grid[i][j].getState() != CellState.START && grid[i][j].getState() != CellState.FINISH) {
-					grid[i][j].setState(CellState.BLANK);
-				}
+				grid[i][j].setState(grid[i][j].getState());
 			}
 		}
 		repaint();
