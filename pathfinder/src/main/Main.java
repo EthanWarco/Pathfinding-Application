@@ -127,7 +127,8 @@ public class Main implements ActionListener {
 		pathfindingAlgorithms = new JComboBox<String>(algs);
 		pathfindingAlgorithms.setPreferredSize(new Dimension(200, 30));
 		pathfindingAlgorithms.setFont(toolbarFont);
-		pathfindingAlgorithms.setSelectedIndex(algs.length-1);
+		pathfindingAlgorithms.setSelectedIndex(0);
+		pathfindingAlgorithms.addActionListener(this);
 		
 		play = new JButton("Play");
 		play.setPreferredSize(new Dimension(300, 40));
@@ -395,6 +396,10 @@ public class Main implements ActionListener {
 					mazePanel.setCanDraw(true);
 				} else if(e.getSource() == randomMaze) {
 					mazePanel.generateRandomMaze();
+				} else if(e.getSource() == pathfindingAlgorithms) {
+					boolean bfs = pathfindingAlgorithms.getSelectedItem() == "Breadth First Search";
+					if(bfs) diagonals.setSelected(false);
+					diagonals.setEnabled(!bfs);
 				}
 			}
 		}).start();
