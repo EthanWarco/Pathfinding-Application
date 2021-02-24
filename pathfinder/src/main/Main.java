@@ -29,7 +29,6 @@ import algorithms.PathFinder;
 
 public class Main implements ActionListener {
 	
-	//Components
 	private static JFrame frame;
 	private static JPanel toolbar;
 	private static JButton randomize;
