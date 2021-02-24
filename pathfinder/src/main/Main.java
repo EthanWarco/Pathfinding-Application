@@ -154,7 +154,7 @@ public class Main implements ActionListener {
 		showNodes.setHorizontalTextPosition(JCheckBox.LEFT);
 		showNodes.addActionListener(this);
 		
-		delayLabel = new JLabel("Delay: " + 10 + " ms");
+		delayLabel = new JLabel("Delay: 10 ms");
 		delayLabel.setFont(toolbarFont);
 		delayLabel.setHorizontalAlignment(JLabel.CENTER);
 		delayLabel.setPreferredSize(new Dimension(300, 30));
