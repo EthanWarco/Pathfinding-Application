@@ -397,6 +397,7 @@ public class Main implements ActionListener {
 				} else if(e.getSource() == randomMaze) {
 					mazePanel.generateRandomMaze();
 				} else if(e.getSource() == pathfindingAlgorithms) {
+					//Removes Option to allow diagonals when using BFS
 					boolean bfs = pathfindingAlgorithms.getSelectedItem() == "Breadth First Search";
 					if(bfs) diagonals.setSelected(false);
 					diagonals.setEnabled(!bfs);
