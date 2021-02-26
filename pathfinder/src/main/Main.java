@@ -53,7 +53,7 @@ public class Main implements ActionListener {
 	private static JCheckBox showNodes;
 	private static int delay = 10;
 	public static int div = 24;
-	private static final Integer[] factors = findFactors(div);
+	private static final Integer[] factors = {3, 4, 6, 8, 12, 24};
 	
 	protected static CellState status = CellState.BLANK;
 	public static DrawingArea mazePanel;
@@ -409,21 +409,6 @@ public class Main implements ActionListener {
 	public static void setPlayStatus(boolean value) {
 		play.setEnabled(value);
 	}
-	
-	//finds factors of number rather than making them constant, to allow the "div" variable to be custom
-	private static Integer[] findFactors(int num) {
-		ArrayList<Integer> nums = new ArrayList<Integer>();
-		for(int i = 2; i < num; i++) {
-			if(num%i == 0) {
-				nums.add(i);
-			}
-		}
-		nums.add(num);
-		Integer[] array = nums.toArray(new Integer[(nums.size())]);
-		return array;
-	}
-	
-	
 	
 	public static void main(String[] args) {
 		new Main();

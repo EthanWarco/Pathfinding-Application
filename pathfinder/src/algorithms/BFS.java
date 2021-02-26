@@ -9,6 +9,10 @@ import main.CellState;
 
 public class BFS extends PathFinder {
 	
+	/*
+	 * Breadth First Search
+	 */
+	
 	private final Cell[][] grid;
 	private final boolean diagonal;
 	private final boolean showCheckedNodes;
@@ -42,7 +46,7 @@ public class BFS extends PathFinder {
 			for(int dx = -1; dx <= 1; dx++) {
 				for(int dy = -1; dy <= 1; dy++) {
 					if(!diagonal && dx != 0 && dy != 0) continue;
-					int x = curr.graphX + dx, y = curr.graphY + dy;
+					int x = curr.x + dx, y = curr.y + dy;
 					
 					if((dx != 0 || dy != 0) && x >= 0 && y >= 0 && x < grid.length && y < grid[0].length && !visited[x + grid.length*y] && grid[x][y].getState() != CellState.WALL) {
 						visited[x + grid.length*y] = true;

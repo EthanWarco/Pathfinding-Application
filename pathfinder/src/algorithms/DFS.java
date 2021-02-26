@@ -9,6 +9,10 @@ import main.CellState;
 
 public class DFS extends PathFinder {
 	
+	/*
+	 * Depth First Search
+	 */
+	
 	private final Cell[][] grid;
 	private final Set<Cell> visited;
 	private final boolean diagonal;
@@ -44,7 +48,7 @@ public class DFS extends PathFinder {
 		if(cell == end) return true;
 		visited.add(cell);
 		
-		int x = cell.graphX, y = cell.graphY;
+		int x = cell.x, y = cell.y;
 		int w = grid.length, h = grid[0].length;
 		
 		for(int dx = -1; dx <= 1; dx++) {

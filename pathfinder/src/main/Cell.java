@@ -7,70 +7,55 @@ import java.awt.Polygon;
 
 public class Cell implements Comparable<Cell> {
 	
-	public int screenX, screenY;
-	public int graphX, graphY;
-	public int width, height;
+	public int x, y;
+	public int size;
 	public float heuristic;
 	public float stepCost;
 	public Cell parent;
 	public boolean visited = false;
 	private CellState state = CellState.BLANK;
-	private CellState previousState = state;
-	private Polygon cell = new Polygon();
 	private Color background = new Color(211, 215, 239);
-	private Graphics2D g2d;
 	private Color gridColor = new Color(168, 173, 223);
-	private DrawingArea canvas = Main.mazePanel;
+	private Polygon cell = new Polygon();
+	private Graphics2D g2d;
+	private static DrawingArea canvas = Main.mazePanel;
 	
-	public Cell(int screenX, int screenY, int graphX, int graphY, int width, int height, Graphics2D g2d) {
-		this.screenX = screenX;
-		this.screenY = screenY;
-		this.graphX = graphX;
-		this.graphY = graphY;
+	public Cell(int screenX, int screenY, int graphX, int graphY, int size, Graphics2D g2d) {
+		this.x = graphX;
+		this.y = graphY;
 		this.g2d = g2d;
 		cell.addPoint(screenX, screenY);
-		cell.addPoint(screenX + width, screenY);
-		cell.addPoint(screenX + width, screenY + height);
-		cell.addPoint(screenX, screenY + height);
+		cell.addPoint(screenX + size, screenY);
+		cell.addPoint(screenX + size, screenY + size);
+		cell.addPoint(screenX, screenY + size);
 	}
 	
 	public Cell(Cell cell, Cell parent) {
-		this.screenX = cell.screenX;
-		this.screenY = cell.screenY;
-		this.graphX = cell.graphX;
-		this.graphY = cell.graphY;
+		this.x = cell.x;
+		this.y = cell.y;
 		this.g2d = cell.g2d;
 		this.cell = cell.cell;
 		this.parent = parent;
 	}
 	
 	public void setState(CellState state) {
-		previousState = this.state;
-		this.state = state;
 		switch(state) {
 			case BLANK:		fillSquare(background, true);
 							break;
 			case FINISH:	fillSquare(Color.GREEN, false);
-							canvas.hasFinish = true;
 							canvas.finish = this;
 							break;
 			case START:		fillSquare(Color.RED, false);
-							canvas.hasStart = true;
 							canvas.start = this;
 							break;
 			case WALL:		fillSquare(Color.BLACK, false);
 							break;
 		}
-		if(previousState == CellState.FINISH && state != CellState.FINISH) {
-			canvas.hasFinish = false;
-		} else if(previousState == CellState.START && state != CellState.START) {
-			canvas.hasStart = false;
-		}
-		if(canvas.hasStart && canvas.hasFinish) {
-			Main.setPlayStatus(true);
-		} else {
-			Main.setPlayStatus(false);
-		}
+		if(this.state == CellState.FINISH && state != CellState.FINISH) canvas.finish = null;
+		else if(this.state == CellState.START && state != CellState.START) canvas.start = null;
+		
+		Main.setPlayStatus(canvas.start != null && canvas.finish != null);
+		this.state = state;
 	}
 	
 	public CellState getState() {
@@ -85,13 +70,9 @@ public class Cell implements Comparable<Cell> {
 		g2d.setPaint(color);
 		
 		g2d.fill(cell);
-		if(drawGrid) {
-			g2d.setPaint(gridColor);
-			g2d.draw(cell);
-		} else {
-			g2d.draw(cell);
-		}
+		if(drawGrid) g2d.setPaint(gridColor);
 		
+		g2d.draw(cell);
 		g2d.setPaint(Color.BLACK);
 		canvas.repaint();
 	}

@@ -32,8 +32,6 @@ public class DrawingArea extends JComponent {
 	private int widthRatio = 5;
 	private boolean canDraw = true;
 	private Cell[][] grid;
-	public boolean hasFinish = false;
-	public boolean hasStart = false;
 	public Cell start;
 	public Cell finish;
 	
@@ -94,20 +92,18 @@ public class DrawingArea extends JComponent {
 	}
 	
 	public void clear(int div) {
+		finish = start = null;
 		grid = new Cell[getSize().width/div][getSize().height/div];
 		g2d.setPaint(background);
 		g2d.fillRect(0, 0, getSize().width, getSize().height);
 		div--;
 		for(int i = 0; i < grid.length; i++) {
 			for(int j = 0; j < grid[i].length; j++) {
-				Cell cell = new Cell(i*div + i, j*div + j, i, j, div, div, g2d);
+				Cell cell = new Cell(i*div + i, j*div + j, i, j, div, g2d);
 				cell.setState(CellState.BLANK);
 				grid[i][j] = cell;
 			}
 		}
-		Main.setPlayStatus(false);
-		hasFinish = false;
-		hasStart = false;
 		g2d.setPaint(Color.BLACK);
 		repaint();
 	}
