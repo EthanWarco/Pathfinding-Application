@@ -1,4 +1,4 @@
-package algorithms;
+package pathfinding_algorithms;
 
 import java.awt.Color;
 import java.util.PriorityQueue;
@@ -14,35 +14,32 @@ public class AStar extends PathFinder {
 	
 	private final Cell[][] grid;
 	private final boolean[] visited;
-	private final int startX, startY;
-	private final int endX, endY;
 	private final boolean diagonal;
 	private final PriorityQueue<Cell> open;
 	private final boolean showCheckedNodes;
 	private final int delay;
+	private final Cell start;
 	private final Cell end;
 	private Cell current;
 	
 	public AStar(Cell[][] grid, Cell start, Cell end, boolean diagonal, boolean showCheckedNodes, int delay) {
 		this.grid = grid;
-		this.startX = start.x;
-		this.startY = start.y;
-		this.endX = end.x;
-		this.endY = end.y;
 		this.diagonal = diagonal;
 		this.open = new PriorityQueue<Cell>();
 		this.visited = new boolean[grid.length*grid[0].length];
-		this.current = grid[startX][startY];
+		this.current = grid[start.x][start.y];
 		this.showCheckedNodes = showCheckedNodes;
 		this.delay = delay;
 		this.end = end;
+		this.start = start;
+		start.stepCost = 0;
 	}
 	
 	public boolean findPath() {
 		running = true;
 		visited[current.x + current.y*grid.length] = true;
 		addNeighborsToOpenList();
-		while((current.x != endX || current.y != endY) && running) {
+		while((current.x != end.x || current.y != end.y) && running) {
 			if(open.isEmpty()) return false;
 			current = open.poll();
 			visited[current.x + current.y*grid.length] = true;
@@ -57,7 +54,7 @@ public class AStar extends PathFinder {
 			}
 			addNeighborsToOpenList();
 		}
-		while(current.x != startX || current.y != startY && running) {
+		while(current.x != start.x || current.y != start.y && running) {
 			current = current.parent;
 			current.fillSquare(Color.YELLOW, false);
 		}

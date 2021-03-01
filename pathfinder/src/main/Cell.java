@@ -2,13 +2,11 @@ package main;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Polygon;
 
 public class Cell implements Comparable<Cell> {
 	
 	public int x, y;
-	public int size;
 	public float heuristic;
 	public float stepCost;
 	public Cell parent;
@@ -60,10 +58,6 @@ public class Cell implements Comparable<Cell> {
 	
 	public CellState getState() {
 		return state;
-	}
-	
-	public boolean containsPoint(Point p) {
-		return cell.contains(p);
 	}
 	
 	public void fillSquare(Color color, boolean drawGrid) {

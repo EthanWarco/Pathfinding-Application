@@ -9,7 +9,6 @@ import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -24,7 +23,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.FontUIResource;
 
-import algorithms.PathFinder;
+import maze_algorithms.Maze;
+import pathfinding_algorithms.PathFinder;
 
 
 public class Main implements ActionListener {
@@ -41,11 +41,13 @@ public class Main implements ActionListener {
 	private static JComboBox<Integer> densities;
 	private static JComboBox<Integer> sizes;
 	private static JComboBox<String> pathfindingAlgorithms;
+	private static JComboBox<String> mazeAlgorithms;
 	private static JLabel blank;
 	private static JLabel actionsLabel;
 	private static JLabel randomizedDensity;
 	private static JLabel sizesLabel;
 	private static JLabel pathAlgLabel;
+	private static JLabel mazeAlgLabel;
 	private static JLabel noPathFound;
 	private static JLabel delayLabel;
 	private static JSlider delaySlider;
@@ -53,7 +55,7 @@ public class Main implements ActionListener {
 	private static JCheckBox showNodes;
 	private static int delay = 10;
 	public static int div = 24;
-	private static final Integer[] factors = {3, 4, 6, 8, 12, 24};
+	private static final Integer[] factors = {4, 6, 8, 12, 24};
 	
 	protected static CellState status = CellState.BLANK;
 	public static DrawingArea mazePanel;
@@ -128,6 +130,16 @@ public class Main implements ActionListener {
 		pathfindingAlgorithms.setFont(toolbarFont);
 		pathfindingAlgorithms.setSelectedIndex(0);
 		pathfindingAlgorithms.addActionListener(this);
+		
+		mazeAlgLabel = new JLabel("Algorithm:");
+		mazeAlgLabel.setPreferredSize(new Dimension(100, 30));
+		mazeAlgLabel.setFont(toolbarFont);
+		
+		String[] mazeAlgs = {"Recursive Backtracking", "Kruskal's Algorithm", "Wilson's Algorithm", "Hunt And Kill"};
+		mazeAlgorithms = new JComboBox<String>(mazeAlgs);
+		mazeAlgorithms.setPreferredSize(new Dimension(200, 30));
+		mazeAlgorithms.setFont(toolbarFont);
+		mazeAlgorithms.setSelectedIndex(0);
 		
 		play = new JButton("Play");
 		play.setPreferredSize(new Dimension(300, 40));
@@ -226,12 +238,22 @@ public class Main implements ActionListener {
 
 		gbc.gridy++;
 		blank = new JLabel("");
-		blank.setPreferredSize(new Dimension(300, 100));
+		blank.setPreferredSize(new Dimension(300, 60));
 		toolbar.add(blank, gbc);
-
+		
 		gbc.gridy++;
+		gbc.gridwidth = 2;
+		toolbar.add(mazeAlgLabel, gbc);
+		
+		gbc.gridx = 2;
+		gbc.gridwidth = 1;
+		toolbar.add(mazeAlgorithms, gbc);
+		
+		gbc.gridy++;
+		gbc.gridx = 0;
+		gbc.gridwidth = 3;
 		blank = new JLabel("");
-		blank.setPreferredSize(new Dimension(300, 5));
+		blank.setPreferredSize(new Dimension(300, 10));
 		toolbar.add(blank, gbc);
 		
 		gbc.gridy++;
@@ -342,11 +364,11 @@ public class Main implements ActionListener {
 				if(e.getSource() == clearGrid) {
 					Maze.stopMazeGeneration();
 					PathFinder.stopPathFinding();
-					mazePanel.clear(div);
+					mazePanel.clear();
 				} else if(e.getSource() == randomize) {
 					Maze.stopMazeGeneration();
 					PathFinder.stopPathFinding();
-					mazePanel.clear(div);
+					mazePanel.clear();
 					mazePanel.randomize((int)densities.getSelectedItem());
 				} else if(e.getSource() == clearPath) {
 					mazePanel.clearPath();
@@ -366,7 +388,7 @@ public class Main implements ActionListener {
 					Maze.stopMazeGeneration();
 					PathFinder.stopPathFinding();
 					div = (int) sizes.getSelectedItem();
-					mazePanel.clear(div);
+					mazePanel.clear();
 				} else if(e.getSource() == quit) {
 					Maze.stopMazeGeneration();
 					PathFinder.stopPathFinding();
@@ -375,26 +397,27 @@ public class Main implements ActionListener {
 					Maze.stopMazeGeneration();
 					PathFinder.stopPathFinding();
 					for(Component comp : toolbar.getComponents()) {
-						if(comp != quit) {
-							comp.setEnabled(false);
-						}
+						if(comp != quit) comp.setEnabled(false);
 					}
 					
 					mazePanel.setCanDraw(false);
 					boolean found = mazePanel.drawPath((String)pathfindingAlgorithms.getSelectedItem(), showNodes.isSelected(), diagonals.isSelected(), delay);
 					
-					if(found) {
-						noPathFound.setText("");
-					} else {
-						noPathFound.setText("No path found!");
-					}
+					if(found) noPathFound.setText("");
+					else noPathFound.setText("No path found!");
 					
-					for(Component comp : toolbar.getComponents()) {
-						comp.setEnabled(true);
-					}
+					for(Component comp : toolbar.getComponents()) comp.setEnabled(true);
 					mazePanel.setCanDraw(true);
 				} else if(e.getSource() == randomMaze) {
-					mazePanel.generateRandomMaze();
+					mazePanel.setCanDraw(false);
+					for(Component comp : toolbar.getComponents()) {
+						if(comp != quit) comp.setEnabled(false);
+					}
+					
+					mazePanel.generateRandomMaze((String)mazeAlgorithms.getSelectedItem());
+					
+					for(Component comp : toolbar.getComponents()) comp.setEnabled(true);
+					mazePanel.setCanDraw(true);
 				} else if(e.getSource() == pathfindingAlgorithms) {
 					//Removes Option to allow diagonals when using BFS
 					boolean bfs = pathfindingAlgorithms.getSelectedItem() == "Breadth First Search";

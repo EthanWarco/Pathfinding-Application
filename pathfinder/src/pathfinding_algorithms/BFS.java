@@ -1,4 +1,4 @@
-package algorithms;
+package pathfinding_algorithms;
 
 import java.awt.Color;
 import java.util.LinkedList;

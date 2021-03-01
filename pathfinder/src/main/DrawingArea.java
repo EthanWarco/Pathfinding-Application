@@ -15,17 +15,21 @@ import java.util.Random;
 
 import javax.swing.JComponent;
 
-import algorithms.AStar;
-import algorithms.BFS;
-import algorithms.DFS;
-import algorithms.PathFinder;
+import maze_algorithms.HuntAndKill;
+import maze_algorithms.Maze;
+import maze_algorithms.RandomizedDFS;
+import maze_algorithms.RandomizedKruskal;
+import maze_algorithms.Wilsons;
+import pathfinding_algorithms.AStar;
+import pathfinding_algorithms.BFS;
+import pathfinding_algorithms.DFS;
+import pathfinding_algorithms.PathFinder;
 
 @SuppressWarnings("serial")
 public class DrawingArea extends JComponent {
 	
 	private Graphics2D g2d;
 	private Image image;
-	private Maze maze;
 	private int width = Toolkit.getDefaultToolkit().getScreenSize().width;
 	private int height = Toolkit.getDefaultToolkit().getScreenSize().height;
 	private Color background = new Color(211, 215, 239);
@@ -49,11 +53,8 @@ public class DrawingArea extends JComponent {
 					Cell cell = findCell(new Point((int)e.getLocationOnScreen().getX() - (width/widthRatio), (int)e.getLocationOnScreen().getY()));
 					if(Main.status == CellState.FINISH && finish != null) finish.setState(CellState.BLANK);
 					else if(Main.status == CellState.START && start != null) start.setState(CellState.BLANK);
-					
-					if(cell != null) {
-						cell.setState(Main.status);
-						repaint();
-					}
+					cell.setState(Main.status);
+					repaint();
 				}
 			}
 			
@@ -67,10 +68,8 @@ public class DrawingArea extends JComponent {
 				if(canDraw) {
 					Cell cell = findCell(new Point((int)e.getLocationOnScreen().getX() - (width/widthRatio), (int)e.getLocationOnScreen().getY()));
 					if(Main.status != CellState.FINISH && Main.status != CellState.START) {
-						if(cell != null) {
-							cell.setState(Main.status);
-							repaint();
-						}
+						cell.setState(Main.status);
+						repaint();
 					}
 				}
 			}
@@ -85,18 +84,20 @@ public class DrawingArea extends JComponent {
 			image = createImage(getSize().width, getSize().height);
 			g2d = (Graphics2D) image.getGraphics();
 			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			clear(24);
+			clear();
 		}
 		
 		g.drawImage(image, 0, 0, null);
 	}
 	
-	public void clear(int div) {
+	public void clear() {
 		finish = start = null;
-		grid = new Cell[getSize().width/div][getSize().height/div];
+		grid = new Cell[getSize().width/Main.div][getSize().height/Main.div];
+		
 		g2d.setPaint(background);
 		g2d.fillRect(0, 0, getSize().width, getSize().height);
-		div--;
+		
+		int div = Main.div-1;
 		for(int i = 0; i < grid.length; i++) {
 			for(int j = 0; j < grid[i].length; j++) {
 				Cell cell = new Cell(i*div + i, j*div + j, i, j, div, g2d);
@@ -104,6 +105,7 @@ public class DrawingArea extends JComponent {
 				grid[i][j] = cell;
 			}
 		}
+		
 		g2d.setPaint(Color.BLACK);
 		repaint();
 	}
@@ -118,21 +120,6 @@ public class DrawingArea extends JComponent {
 			}
 		}
 		repaint();
-	}
-	
-	private Cell findCell(Point point) {
-		for(int i = 0; i < grid.length; i++) {
-			for(int j = 0; j < grid[i].length; j++) {
-				if(grid[i][j].containsPoint(point)) {
-					return grid[i][j];
-				}
-			}
-		}
-		return null;
-	}
-	
-	public void setCanDraw(boolean canDraw) {
-		this.canDraw = canDraw;
 	}
 	
 	public boolean drawPath(String algorithm, boolean showNodes, boolean diagonals, int delay) {
@@ -150,18 +137,42 @@ public class DrawingArea extends JComponent {
 		return finder.findPath();
 	}
 	
+	public void generateRandomMaze(String algorithm) {
+		Maze maze = null;
+		switch(algorithm) {
+			case "Recursive Backtracking": maze = new RandomizedDFS(grid);
+			break;
+			case "Kruskal's Algorithm": maze = new RandomizedKruskal(grid);
+			break;
+			case "Wilson's Algorithm": maze = new Wilsons(grid);
+			break;
+			case "Hunt And Kill": maze = new HuntAndKill(grid);
+			break;
+		}
+		
+		maze.generateMaze();
+		repaint();
+	}
+	
+	
+	/*
+	 * Helper Functions
+	 */
+	
+	private Cell findCell(Point point) {
+		return grid[point.x/Main.div][point.y/Main.div];
+	}
+	
+	public void setCanDraw(boolean canDraw) {
+		this.canDraw = canDraw;
+	}
+	
 	public void clearPath() {
 		for(int i = 0; i < grid.length; i++) {
 			for(int j = 0; j < grid[i].length; j++) {
 				grid[i][j].setState(grid[i][j].getState());
 			}
 		}
-		repaint();
-	}
-	
-	public void generateRandomMaze() {
-		maze = new Maze(grid);
-		maze.generateMaze();
 		repaint();
 	}
 	

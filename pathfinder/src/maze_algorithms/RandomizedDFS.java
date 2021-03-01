@@ -1,39 +1,16 @@
-package main;
+package maze_algorithms;
 
 import java.util.Random;
 
-public class Maze {
-	
-	private static final int[][] orders = {{4,3,2,1},
-										   {4,3,1,2},
-										   {4,2,3,1},
-										   {4,2,1,3},
-										   {4,1,3,2},
-										   {4,1,2,3},
-										   {3,4,2,1},
-										   {3,4,1,2},
-										   {3,2,4,1},
-										   {3,2,1,4},
-										   {3,1,4,2},
-										   {3,1,2,4},
-										   {2,4,3,1},
-										   {2,4,1,3},
-										   {2,3,4,1},
-										   {2,3,1,4},
-										   {2,1,4,3},
-										   {2,1,3,4},
-										   {1,4,3,2},
-										   {1,4,2,3},
-										   {1,3,4,2},
-										   {1,3,2,4},
-										   {1,2,4,3},
-										   {1,2,3,4}};
-	
+import main.Cell;
+import main.CellState;
+
+public class RandomizedDFS extends Maze {
+
 	private final Cell[][] grid;
 	private final Random random;
-	private static boolean running = true;
 	
-	public Maze(Cell[][] grid) {
+	public RandomizedDFS(Cell[][] grid) {
 		this.grid = grid;
 		this.random = new Random();
 	}
@@ -62,10 +39,6 @@ public class Maze {
 		}
 	}
 	
-	
-	/*
-	 * Helper Functions
-	 */
 	private void constructCells() {
 		for(int i = 0; i < grid.length; i++) {
 			for(int j = 0; j < grid[i].length; j++) {
@@ -74,14 +47,8 @@ public class Maze {
 					grid[i][j].visited = false;
 				} else {
 					grid[i][j].setState(CellState.WALL);
-					grid[i][j].visited = true;
 				}
 			}
 		}
 	}
-	
-	public static void stopMazeGeneration() {
-		running = false;
-	}
-
 }
