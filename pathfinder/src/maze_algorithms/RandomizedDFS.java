@@ -27,7 +27,7 @@ public class RandomizedDFS extends Maze {
 		if(!running) return;
 		
 		int[] order = orders[random.nextInt(orders.length)];
-		for(int i = 0; i < 4; i++) {
+		for(int i = 0; i < 4 && running; i++) {
 			int dx = order[i] == 1 ? 2 : (order[i] == 2 ? -2 : 0);
 			int dy = order[i] == 3 ? 2 : (order[i] == 4 ? -2 : 0);
 			int x = cell.x + dx, y = cell.y + dy;
@@ -40,8 +40,8 @@ public class RandomizedDFS extends Maze {
 	}
 	
 	private void constructCells() {
-		for(int i = 0; i < grid.length; i++) {
-			for(int j = 0; j < grid[i].length; j++) {
+		for(int i = 0; i < grid.length && running; i++) {
+			for(int j = 0; j < grid[i].length && running; j++) {
 				if(i%2 == 0 && j%2 == 0) {
 					grid[i][j].setState(CellState.BLANK);
 					grid[i][j].visited = false;

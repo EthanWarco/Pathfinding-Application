@@ -1,7 +1,5 @@
 package maze_algorithms;
 
-import main.Cell;
-
 public abstract class Maze {
 	
 	protected static final int[][] orders = {{4,3,2,1},
@@ -34,7 +32,7 @@ public abstract class Maze {
 	
 	public abstract void generateMaze();
 	
-	public static void stopMazeGeneration() {
+	public static final void stopMazeGeneration() {
 		running = false;
 	}
 	

@@ -15,6 +15,8 @@ import java.util.Random;
 
 import javax.swing.JComponent;
 
+import maze_algorithms.Ellers;
+import maze_algorithms.GrowingTree;
 import maze_algorithms.HuntAndKill;
 import maze_algorithms.Maze;
 import maze_algorithms.RandomizedDFS;
@@ -147,6 +149,10 @@ public class DrawingArea extends JComponent {
 			case "Wilson's Algorithm": maze = new Wilsons(grid);
 			break;
 			case "Hunt And Kill": maze = new HuntAndKill(grid);
+			break;
+			case "Growing Tree": maze = new GrowingTree(grid);
+			break;
+			case "Eller's Algorithm": maze = new Ellers(grid);
 			break;
 		}
 		

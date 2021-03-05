@@ -51,8 +51,8 @@ public class Wilsons extends Maze {
 	}
 	
 	private void constructCells() {
-		for(int i = 0; i < grid.length; i++) {
-			for(int j = 0; j < grid[i].length; j++) {
+		for(int i = 0; i < grid.length && running; i++) {
+			for(int j = 0; j < grid[i].length && running; j++) {
 				if(i%2 == 0 && j%2 == 0) {
 					grid[i][j].setState(CellState.BLANK);
 					grid[i][j].visited = false;

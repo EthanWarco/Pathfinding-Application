@@ -8,11 +8,6 @@ import main.Cell;
 import main.CellState;
 
 public class RandomizedKruskal extends Maze {
-	
-	/*
-	 * The way I implemented the union-find algorithm for this was I used heuristic variable of the cell as rank and
-	 * and the parent variable of the cell as which set it belongs to.
-	 */
 
 	private final Cell[][] grid;
 	private final List<Cell> walls;
@@ -46,15 +41,12 @@ public class RandomizedKruskal extends Maze {
 	}
 	
 	private void constructCells() {
-		for(int i = 0; i < grid.length; i++) {
-			for(int j = 0; j < grid[i].length; j++) {
+		for(int i = 0; i < grid.length && running; i++) {
+			for(int j = 0; j < grid[i].length && running; j++) {
 				grid[i][j].heuristic = 0;
 				grid[i][j].parent = grid[i][j];
-				if(i%2 == 0 && j%2 == 0) {
-					grid[i][j].setState(CellState.BLANK);
-				} else {
-					grid[i][j].setState(CellState.WALL);
-				}
+				if(i%2 == 0 && j%2 == 0) grid[i][j].setState(CellState.BLANK);
+				else grid[i][j].setState(CellState.WALL);
 				
 				if(i%2 == 0 ^ j%2 == 0) walls.add(grid[i][j]);
 			}
@@ -64,18 +56,19 @@ public class RandomizedKruskal extends Maze {
 	
 	
 	/*
-	 * Union-find algorithms
+	 * The way I implemented the union-find algorithm for this was I used heuristic variable of the cell as rank and
+	 * and the parent variable of the cell as which set it belongs to.
 	 */
 	
-	private Cell find(Cell cell) {
+	protected static final Cell find(Cell cell) {
 		if(cell == null) return null;
 		
 		Cell curr = cell;
-		while(curr.parent != curr) curr = curr.parent;
+		while(curr.parent != curr && running) curr = curr.parent;
 		Cell root = curr;
 		
 		//Path Compression
-		while(curr != root) {
+		while(curr != root && running) {
 			Cell next = curr.parent;
 			curr.parent = root;
 			curr = next;
@@ -84,14 +77,14 @@ public class RandomizedKruskal extends Maze {
 		return root;
 	}
 	
-	private void union(Cell root1, Cell root2) {
+	protected static final void union(Cell root1, Cell root2) {
 		if(root1 == null || root2 == null) return;
 		
 		if(root1.heuristic < root2.heuristic) root1.parent = root2;
 		else if(root1.heuristic > root2.heuristic) root2.parent = root1;
 		else {
 			root1.parent = root2;
-			root1.heuristic++;
+			root2.heuristic++;
 		}
 	}
 

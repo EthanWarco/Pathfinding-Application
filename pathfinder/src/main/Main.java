@@ -135,7 +135,7 @@ public class Main implements ActionListener {
 		mazeAlgLabel.setPreferredSize(new Dimension(100, 30));
 		mazeAlgLabel.setFont(toolbarFont);
 		
-		String[] mazeAlgs = {"Recursive Backtracking", "Kruskal's Algorithm", "Wilson's Algorithm", "Hunt And Kill"};
+		String[] mazeAlgs = {"Recursive Backtracking", "Kruskal's Algorithm", "Wilson's Algorithm", "Hunt And Kill", "Growing Tree", "Eller's Algorithm"};
 		mazeAlgorithms = new JComboBox<String>(mazeAlgs);
 		mazeAlgorithms.setPreferredSize(new Dimension(200, 30));
 		mazeAlgorithms.setFont(toolbarFont);
